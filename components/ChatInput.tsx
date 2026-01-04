@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUp, Plus, X, Image as ImageIcon, Camera, Images, FileUp, Mic, RefreshCcw, Square, Loader2, SlidersHorizontal, Pause } from 'lucide-react';
+import { ArrowUp, Plus, X, Image as ImageIcon, Camera, Images, FileUp, Mic, RefreshCcw, Square, Loader2, SlidersHorizontal, Pause, Paperclip } from 'lucide-react';
 import { Attachment } from '../types';
 import { transcribeAudio } from '../services/gemini';
 
@@ -391,8 +391,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
         document.body
       )}
 
-      {/* MAIN INPUT */}
-      <div className={`relative bg-white rounded-[26px] p-4 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${isRecording ? 'border-red-400 ring-2 ring-red-100' : (isImageMode ? 'border-purple-200 shadow-purple-50' : 'border-slate-200/60')} flex flex-col gap-2`}>
+      {/* MAIN INPUT - Pure White Background for Bright Mode */}
+      <div className={`relative bg-white dark:bg-black rounded-[26px] p-4 transition-all duration-300 shadow-[0_4px_20px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.05)] border ${isRecording ? 'border-red-400 ring-2 ring-red-100' : (isImageMode ? 'border-purple-200 shadow-purple-50' : 'border-slate-200 dark:border-white/20')} flex flex-col gap-2`}>
         
         <input 
           type="file" ref={fileInputRef} onChange={(e) => handleFileSelect(e, false)} 
@@ -405,23 +405,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
             <div className="relative inline-block self-start mb-1 animate-in fade-in slide-in-from-bottom-2 duration-300">
             {previewUrl ? (
                 <div 
-                className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm w-20 h-20 group cursor-zoom-in"
+                className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm w-20 h-20 group cursor-zoom-in"
                 onClick={handlePreviewClick}
                 >
                 <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                 </div>
             ) : (
-                <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm w-auto h-12 flex items-center px-4 gap-2">
-                    <div className="p-1.5 bg-blue-100 rounded-lg text-blue-600">
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 shadow-sm w-auto h-12 flex items-center px-4 gap-2">
+                    <div className="p-1.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                         <FileUp size={16} />
                     </div>
-                    <span className="text-xs font-medium text-slate-700 truncate max-w-[150px]">{fileName}</span>
+                    <span className="text-xs font-medium text-slate-700 dark:text-slate-200 truncate max-w-[150px]">{fileName}</span>
                 </div>
             )}
             <button 
                 onClick={clearAttachment}
-                className="absolute -top-2 -right-2 bg-white text-slate-500 hover:text-red-500 hover:bg-red-50 border border-slate-200 shadow-sm rounded-full p-1 transition-all z-10 transform hover:scale-110"
+                className="absolute -top-2 -right-2 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-slate-200 dark:border-slate-700 shadow-sm rounded-full p-1 transition-all z-10 transform hover:scale-110"
                 title="Xóa tệp"
             >
                 <X size={12} strokeWidth={2.5} />
@@ -441,7 +441,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                     ? "Đang chuyển đổi giọng nói..." 
                     : (isImageMode ? "Mô tả hình ảnh bạn muốn tạo..." : "Hỏi k-ite")
           }
-          className="w-full bg-transparent border-none outline-none focus:outline-none text-slate-800 placeholder:text-slate-400 focus:ring-0 resize-none px-2 max-h-[120px] overflow-y-auto leading-relaxed text-lg min-h-[28px]"
+          className="w-full bg-transparent border-none outline-none focus:outline-none text-black dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0 resize-none px-2 max-h-[120px] overflow-y-auto leading-relaxed text-lg min-h-[28px]"
           style={{ fontFamily: 'Arial, sans-serif' }}
           rows={1}
           disabled={isLoading || isTranscribing}
@@ -453,8 +453,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                 <div className="relative" ref={menuRef}>
                     <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 ${
-                        isMenuOpen ? 'bg-slate-100 text-slate-900' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                    className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 border border-slate-200 dark:border-slate-700 ${
+                        isMenuOpen ? 'bg-slate-100 dark:bg-slate-800 text-black dark:text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-black dark:hover:text-white'
                     }`}
                     disabled={isLoading}
                     >
@@ -462,29 +462,31 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                     </button>
 
                     {isMenuOpen && (
-                        <div className="absolute bottom-full left-0 mb-3 w-44 bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-40 animate-in fade-in slide-in-from-bottom-3 duration-200 origin-bottom-left">
+                        <div className="absolute bottom-full left-0 mb-3 w-44 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-1.5 z-40 animate-in fade-in slide-in-from-bottom-3 duration-200 origin-bottom-left">
                             <div className="space-y-1">
                                 <button
                                     onClick={() => imageInputRef.current?.click()}
-                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left group"
+                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left group"
                                 >
-                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 group-hover:scale-110 transition-transform"><ImageIcon size={20} /></div>
-                                    <span className="font-semibold text-sm text-slate-900">Tải ảnh lên</span>
+                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 dark:text-white group-hover:scale-110 transition-transform"><ImageIcon size={20} /></div>
+                                    <span className="font-semibold text-sm text-slate-900 dark:text-white">Thêm ảnh</span>
                                 </button>
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left group"
+                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left group"
                                 >
-                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 group-hover:scale-110 transition-transform"><FileUp size={20} /></div>
-                                    <span className="font-semibold text-sm text-slate-900">Tải tệp lên</span>
+                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-black dark:text-white group-hover:scale-110 transition-transform">
+                                        <Paperclip size={20} className="-rotate-45" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-slate-900 dark:text-white">Thêm tệp</span>
                                 </button>
                                 {/* Hidden on desktop (md:hidden) */}
                                 <button
                                     onClick={openCamera}
-                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left group md:hidden"
+                                    className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left group md:hidden"
                                 >
-                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 group-hover:scale-110 transition-transform"><Camera size={20} /></div>
-                                    <span className="font-semibold text-sm text-slate-900">Chụp ảnh</span>
+                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 dark:text-white group-hover:scale-110 transition-transform"><Camera size={20} /></div>
+                                    <span className="font-semibold text-sm text-slate-900 dark:text-white">Chụp ảnh</span>
                                 </button>
                             </div>
                         </div>
@@ -495,7 +497,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                 {isImageMode ? (
                     <button
                         onClick={() => setIsImageMode(false)}
-                        className="flex-shrink-0 h-9 px-3 flex items-center justify-center gap-1.5 rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition-all duration-200 animate-in zoom-in"
+                        className="flex-shrink-0 h-9 px-3 flex items-center justify-center gap-1.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all duration-200 animate-in zoom-in"
                         title="Tắt chế độ tạo ảnh"
                     >
                         <Images size={18} strokeWidth={2} />
@@ -505,8 +507,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                     <div className="relative" ref={toolsRef}>
                         <button
                             onClick={() => setIsToolsOpen(!isToolsOpen)}
-                            className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 ${
-                                isToolsOpen ? 'bg-slate-100 text-slate-900' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-900'
+                            className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 border border-slate-200 dark:border-slate-700 ${
+                                isToolsOpen ? 'bg-slate-100 dark:bg-slate-800 text-black dark:text-white' : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-black dark:hover:text-white'
                             }`}
                             disabled={isLoading}
                             title="Công cụ sáng tạo"
@@ -515,14 +517,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                         </button>
 
                         {isToolsOpen && (
-                            <div className="absolute bottom-full left-0 mb-3 w-44 bg-white rounded-2xl shadow-xl border border-slate-100 p-1.5 z-40 animate-in fade-in slide-in-from-bottom-3 duration-200 origin-bottom-left">
+                            <div className="absolute bottom-full left-0 mb-3 w-44 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-1.5 z-40 animate-in fade-in slide-in-from-bottom-3 duration-200 origin-bottom-left">
                                 <div className="space-y-1">
                                     <button
                                         onClick={handleGenerateImageClick}
-                                        className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 transition-colors text-left group"
+                                        className="w-full flex items-center gap-2 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left group"
                                     >
-                                        <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 group-hover:scale-110 transition-transform"><Images size={20} /></div>
-                                        <span className="font-semibold text-sm text-slate-900">Tạo hình ảnh</span>
+                                        <div className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 dark:text-white group-hover:scale-110 transition-transform"><Images size={20} /></div>
+                                        <span className="font-semibold text-sm text-slate-900 dark:text-white">Tạo hình ảnh</span>
                                     </button>
                                 </div>
                             </div>
@@ -535,12 +537,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                  <button
                     onClick={toggleRecording}
                     disabled={isLoading || isTranscribing}
-                    className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${
+                    className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 border ${
                         isRecording 
-                        ? 'bg-red-500 text-white shadow-md animate-pulse' 
+                        ? 'bg-red-500 text-white shadow-md animate-pulse border-red-500' 
                         : isTranscribing
-                            ? 'bg-blue-100 text-blue-500 cursor-wait'
-                            : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'
+                            ? 'bg-blue-100 text-blue-500 cursor-wait border-blue-200'
+                            : 'bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 hover:text-black dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700'
                     }`}
                     title={isRecording ? "Dừng ghi âm" : "Nhập bằng giọng nói"}
                  >
@@ -557,12 +559,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                 {isLoading ? (
                     <button
                         onClick={handleStop}
-                        className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 bg-slate-900 text-white hover:bg-slate-800 shadow-md"
+                        className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 bg-black dark:bg-white text-white dark:text-black hover:opacity-80 shadow-md"
                         title="Dừng tạo"
                     >
                          <div className="relative flex items-center justify-center">
                             {/* YouTube-like Pause Icon (Two bars) */}
-                            <Pause size={20} strokeWidth={2.5} fill="currentColor" className="text-white" />
+                            <Pause size={20} strokeWidth={2.5} fill="currentColor" />
                         </div>
                     </button>
                 ) : (
@@ -571,8 +573,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
                         disabled={(!text.trim() && !attachment) || isTranscribing}
                         className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 ${
                             (text.trim() || attachment) && !isTranscribing
-                            ? isImageMode ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-md' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-md'
-                            : 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                            ? isImageMode ? 'bg-purple-600 text-white hover:bg-purple-500 shadow-md' : 'bg-black dark:bg-white text-white dark:text-black hover:opacity-80 shadow-md'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
                         }`}
                     >
                         <ArrowUp size={20} strokeWidth={2.5} />
@@ -582,7 +584,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSend, onStop, isLoading 
         </div>
       </div>
       <div className="text-center py-2">
-        <p className="text-[11px] text-slate-400 font-medium">k-ite có thể mắc lỗi. Hãy kiểm tra lại thông tin quan trọng.</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-600 font-medium">k-ite có thể mắc lỗi. Hãy kiểm tra lại thông tin quan trọng.</p>
       </div>
     </div>
   );

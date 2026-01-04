@@ -4,11 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>k-ite AI Chat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Single Tailwind Import with Typography Plugin -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              slate: {
+                850: '#172033',
+                900: '#0a0a0a', /* Very dark grey for cards/sidebar */
+                950: '#000000', /* PURE BLACK for main background */
+              }
+            }
+          }
+        }
+      }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- KaTeX CSS for Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -27,6 +43,12 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #94a3b8;
       }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #333333;
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #555555;
+      }
       
       /* Math and Special Character adjustments */
       .prose strong {
@@ -41,7 +63,13 @@
         margin-bottom: 0.5em;
         letter-spacing: -0.02em;
       }
+      .dark .prose h1, .dark .prose h2, .dark .prose h3 {
+        color: #e2e8f0;
+      }
+
       .prose h1 { font-size: 1.8em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.3em; }
+      .dark .prose h1 { border-bottom-color: #333333; }
+      
       .prose h2 { font-size: 1.5em; }
       .prose h3 { font-size: 1.25em; }
       
@@ -52,7 +80,8 @@
       
       /* Code block styling */
       .prose pre {
-        background-color: #1e293b;
+        background-color: #121212;
+        border: 1px solid #333;
         border-radius: 0.75rem;
         color: #e2e8f0;
       }
@@ -77,7 +106,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-800 antialiased overflow-hidden">
+  <body class="bg-white dark:bg-black text-slate-800 dark:text-slate-100 antialiased overflow-hidden transition-colors duration-200">
     <div id="root"></div>
   </body>
 </html>

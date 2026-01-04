@@ -1,48 +1,48 @@
 import React, { useState } from 'react';
 import { KiteIcon } from './KiteIcon';
-import { ArrowRight, Mail, Lock, AlertCircle } from 'lucide-react';
+import { ArrowRight, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 interface LoginScreenProps {
-  onLogin: (email: string) => void;
+  onLogin: (user: { email: string; displayName: string; photoURL: string | null }) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    const normalizedEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
 
-    // 1. Validate inputs exist
-    if (!email.trim() || !password.trim()) {
+    if (!normalizedEmail || !cleanPassword) {
         setError('Vui lòng điền đầy đủ thông tin.');
         return;
     }
 
-    // 2. Validate Gmail format
-    if (!email.toLowerCase().endsWith('@gmail.com')) {
-        setError('Vui lòng sử dụng tài khoản Gmail (@gmail.com).');
-        return;
-    }
-
-    // 3. Validate Password length (>= 12 characters)
-    if (password.length < 12) {
-        setError('Mật khẩu phải có ít nhất 12 ký tự.');
+    if (cleanPassword.length < 6) {
+        setError('Mật khẩu phải có ít nhất 6 ký tự.');
         return;
     }
 
     setIsLoading(true);
     
-    // Simulate authentication process
+    // Simulate login
     setTimeout(() => {
-      // In a real app, this is where you'd validate credentials with a backend.
-      // We accept the login if validations pass.
-      onLogin(email);
-      setIsLoading(false);
-    }, 1000);
+        const username = normalizedEmail.split('@')[0];
+        // Capitalize first letter for display name
+        const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+        
+        onLogin({
+            email: normalizedEmail,
+            displayName: displayName,
+            photoURL: null
+        });
+    }, 800);
   };
 
   return (
@@ -58,26 +58,26 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             {/* Top Shine Effect */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/50 to-transparent opacity-50"></div>
 
-            <div className="flex flex-col items-center text-center mb-6">
+            <div className="flex flex-col items-center text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30 mb-6 transform hover:scale-105 transition-transform duration-500">
                     <KiteIcon className="w-9 h-9" />
                 </div>
-                <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">Đăng nhập</h1>
+                <h1 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">Đăng nhập k-ite</h1>
                 <p className="text-slate-500 text-sm md:text-base max-w-xs mx-auto leading-relaxed">
-                    Sử dụng tài khoản Google để tiếp tục.
+                    Chào mừng bạn quay trở lại.
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                    <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
-                        <AlertCircle size={16} className="flex-shrink-0" />
-                        <span>{error}</span>
-                    </div>
-                )}
+            {error && (
+                <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-2 mb-6 animate-in fade-in slide-in-from-top-1">
+                    <AlertCircle size={16} className="flex-shrink-0" />
+                    <span>{error}</span>
+                </div>
+            )}
 
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5 text-left">
-                    <label htmlFor="email" className="text-xs font-semibold text-slate-500 ml-1 uppercase tracking-wider">Gmail</label>
+                    <label htmlFor="email" className="text-xs font-semibold text-slate-500 ml-1 uppercase tracking-wider">Email</label>
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
@@ -101,18 +101,23 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                         </div>
                         <input
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             id="password"
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
-                            placeholder="Tối thiểu 12 ký tự"
+                            className="block w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+                            placeholder="Mật khẩu của bạn"
                         />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-blue-600 cursor-pointer transition-colors"
+                            tabIndex={-1}
+                        >
+                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
                     </div>
-                    <p className="text-[11px] text-slate-400 text-right px-1">
-                        Yêu cầu ít nhất 12 ký tự
-                    </p>
                 </div>
 
                 <div className="pt-2">
@@ -124,7 +129,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         {isLoading ? (
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                <span>Đang xác thực...</span>
+                                <span>Đang xử lý...</span>
                             </div>
                         ) : (
                             <>

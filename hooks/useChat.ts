@@ -46,6 +46,16 @@ export const useChat = (userEmail: string | null) => {
       // Let the sendMessage function handle the cleanup or checking.
     }
     setIsLoading(false);
+
+    // Remove the last message if it's a bot message that hasn't generated any text yet
+    // This effectively "hides" the loading indicator when paused/stopped
+    setMessages(prev => {
+        const lastMsg = prev[prev.length - 1];
+        if (lastMsg && lastMsg.sender === Sender.Model && !lastMsg.text && !lastMsg.attachment && !lastMsg.isError) {
+            return prev.slice(0, -1);
+        }
+        return prev;
+    });
   }, []);
 
   // Load sessions from local storage when user logs in
@@ -382,11 +392,47 @@ export const useChat = (userEmail: string | null) => {
     }
   }, [currentModel, currentSessionId, messages, startNewChat]);
 
+  // Regenerate functionality
+  const regenerateResponse = useCallback((messageId: string) => {
+    const msgIndex = messages.findIndex(m => m.id === messageId);
+    if (msgIndex <= 0) return;
+
+    const previousMsg = messages[msgIndex - 1];
+    if (previousMsg.sender !== Sender.User) return;
+
+    setMessages(prev => prev.slice(0, msgIndex - 1));
+
+    setTimeout(() => {
+        sendMessage(previousMsg.text, previousMsg.attachment, false);
+    }, 0);
+  }, [messages, sendMessage]);
+
+  // NEW: Edit Message Functionality
+  const editMessage = useCallback((messageId: string, newText: string) => {
+    // 1. Find index of the message to edit
+    const msgIndex = messages.findIndex(m => m.id === messageId);
+    if (msgIndex === -1) return;
+
+    // 2. Capture the existing attachment if any (we don't currently support editing attachments, just text)
+    const existingAttachment = messages[msgIndex].attachment;
+
+    // 3. Rewind state to BEFORE this message
+    setMessages(prev => prev.slice(0, msgIndex));
+
+    // 4. Re-send as a fresh message
+    // Use setTimeout to allow state update to clear chatSessionRef/history if needed
+    setTimeout(() => {
+        sendMessage(newText, existingAttachment, false);
+    }, 0);
+  }, [messages, sendMessage]);
+
   return {
     messages,
     isLoading,
     sendMessage,
     stopGeneration,
+    regenerateResponse, 
+    editMessage, // Export
     currentModel,
     setCurrentModel,
     sessions,
